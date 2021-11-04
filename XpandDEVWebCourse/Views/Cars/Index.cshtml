@@ -1,0 +1,17 @@
+﻿@model List<CarViewModel>
+
+<h2>Cars:</h2>
+
+<div class="cars-list">
+    @foreach (var c in Model)
+    {
+        <partial name="_ListedCar" model="c" />
+    }
+</div>
+
+<br />
+
+<h2>Create a new car:</h2>
+
+<form>
+</form>

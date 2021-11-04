@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentResults" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XpandDEVWebCourse.Data\XpandDEVWebCourse.Data.csproj" />
+    <ProjectReference Include="..\XpandDEVWebCourse.Models\XpandDEVWebCourse.Models.csproj" />
+  </ItemGroup>
+
+</Project>
