@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using XpandDEVWebCourse.Business;
-using XpandDEVWebCourse.Data;
 using XpandDEVWebCourse.Web.ViewModels;
 
 namespace XpandDEVWebCourse.Web.Controllers
@@ -33,20 +32,16 @@ namespace XpandDEVWebCourse.Web.Controllers
             .Select(m => new CarViewModel()
             {
                 Id = m.Id,
-                Model = m.Model,
-                NrBolts = m.NrBolts
+                Model = m.Model
             }).ToList();
 
             return View(carsVm);
         }
 
         [HttpPost]
-          
-        public async Task<IActionResult> AddCar( [Bind("Model, NrBolts")] Cars car )
+        public async Task<IActionResult> AddCar()
         {
-            var result = await _carsService.AddCarAsync(car);
-            // TEMP string script = "<script>alert('" + result + "');</script>";
-            // TEMP Response.Write("<script>alert('Exception: ')</script>");
+            //call await _carsService.addCarAsync(model...);
             return RedirectToAction(nameof(CarsController.Index));
         }
     }
