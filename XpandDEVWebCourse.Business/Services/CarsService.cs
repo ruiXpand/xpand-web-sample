@@ -23,7 +23,7 @@ namespace XpandDEVWebCourse.Business
             var dbCars = await _dbContext.Cars.ToListAsync();
 
             var cars = dbCars
-                .Select(m => new Models.Car() { Id = m.Id, Model = m.Model })
+                .Select(m => new Models.Car() { Id = m.Id, Model = m.Model, NrBolts=m.NrBolts })
                 .ToList();
 
             return cars;
@@ -34,15 +34,38 @@ namespace XpandDEVWebCourse.Business
             var car = await _dbContext.Cars.FirstOrDefaultAsync(m => m.Id == Id);
 
             if (car == null)
-                return Result.Fail("Error while trying to get card");
+                return Result.Fail("Error while trying to get car");
 
             var dtoCar = new Models.Car()
             {
                 Id = car.Id,
-                Model = car.Model
+                Model = car.Model,
+                NrBolts = car.NrBolts
             };
 
             return Result.Ok(dtoCar);
+        }
+
+        public async Task<Result> AddCarAsync(Cars car)
+        {
+            Cars newCar = new Cars
+            {
+                Model = car.Model,
+                NrBolts = car.NrBolts
+            };
+
+            try
+            {
+                await _dbContext.Cars.AddAsync(newCar);
+                _dbContext.SaveChanges();
+                Console.WriteLine(Result.Ok());
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
+
         }
     }
 }
