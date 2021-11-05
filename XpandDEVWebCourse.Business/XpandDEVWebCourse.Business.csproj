@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup>

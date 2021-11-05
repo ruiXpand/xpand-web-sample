@@ -1,17 +1,38 @@
 ﻿@model List<CarViewModel>
 
-<h2>Cars:</h2>
+    <h2>Cars:</h2>
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <label class="col-form-label">Id</label>
+        </div>
+        <div class="col-12 col-md-4">
+            <label class="col-form-label">Model</label>
+        </div>
+        <div class="col-12 col-md-4">
+            <label class="col-form-label">Nº Bolts</label>
+        </div>
+    </div>
+    <div class="cars-list">
+        @foreach (var c in Model)
+        {
+            <partial name="_ListedCar" model="c" />
+        }
+    </div>
 
-<div class="cars-list">
-    @foreach (var c in Model)
-    {
-        <partial name="_ListedCar" model="c" />
-    }
-</div>
+    <br /><br />
 
-<br />
 
-<h2>Create a new car:</h2>
-
-<form>
-</form>
+    <form asp-action="AddCar">
+        <h2>Create a new car:</h2>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <label class="col-form-label" for="model">Model:</label><br>
+                <input class="form-control" type="text" id="Model" name="Model"><br>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="col-form-label" for="nrBolts">Nº of bolts</label><br>
+                <input class="form-control" type="number" id="nrBolts" name="nrBolts">
+            </div>
+        </div>
+        <input class=" col-2 form-control" type="submit" value="Submit">
+    </form>
