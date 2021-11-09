@@ -41,12 +41,11 @@ namespace XpandDEVWebCourse.Web.Controllers
         }
 
         [HttpPost]
-          
         public async Task<IActionResult> AddCar( [Bind("Model, NrBolts")] Cars car )
         {
             var result = await _carsService.AddCarAsync(car);
-            // TEMP string script = "<script>alert('" + result + "');</script>";
-            // TEMP Response.Write("<script>alert('Exception: ')</script>");
+            TempData["FailMessage"] = result.IsFailed? "Failed to add car, please try again." : null;
+            TempData["SuccessMessage"] = result.IsSuccess? "Car created successfully!" : null;
             return RedirectToAction(nameof(CarsController.Index));
         }
     }

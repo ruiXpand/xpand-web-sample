@@ -19,8 +19,26 @@
         }
     </div>
 
-    <br /><br />
-
+    <br />
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success col-12 col-md-8 fade show" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["FailMessage"] != null)
+    {
+        <div class="alert alert-danger col-12 col-md-8 fade show" role="alert">
+            <strong>Failed!</strong> @TempData["FailMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    <br />
 
     <form asp-action="AddCar">
         <h2>Create a new car:</h2>

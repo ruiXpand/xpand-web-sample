@@ -9,7 +9,7 @@ namespace XpandDEVWebCourse.Business
     public interface ICarsService
     {
         Task<List<Car>> GetAllCarsAsync();
-        Task<Result<Car>> GetCarAsync(int Id);
+        Task<Result<Car>> GetCarAsync(int id);
         Task<Result> AddCarAsync(Cars car);
     }
 }
