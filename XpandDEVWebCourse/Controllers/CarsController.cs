@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using XpandDEVWebCourse.Business;
 using XpandDEVWebCourse.Data;
+using XpandDEVWebCourse.Models;
 using XpandDEVWebCourse.Web.ViewModels;
 
 namespace XpandDEVWebCourse.Web.Controllers
@@ -22,12 +23,14 @@ namespace XpandDEVWebCourse.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var carsVm = await GetAllCars();
+
+            return View(carsVm);
+        }
+
+        public async Task<List<CarViewModel>> GetAllCars()
+        {
             var cars = await _carsService.GetAllCarsAsync();
-
-            var carResult = await _carsService.GetCarAsync(1);
-
-            if (carResult.IsFailed)
-                return BadRequest();
 
             var carsVm = cars
             .Select(m => new CarViewModel()
@@ -37,16 +40,52 @@ namespace XpandDEVWebCourse.Web.Controllers
                 NrBolts = m.NrBolts
             }).ToList();
 
-            return View(carsVm);
+            return carsVm;
+        }
+
+        public async Task<Car> GetCar(int id)
+        {
+            var carResult = await _carsService.GetCarAsync(1);
+
+            if (carResult.IsFailed)
+                return null;
+
+            return carResult.Value;
+        }
+
+        public async Task<IActionResult> RemoveCar([Bind("Id")] int Id)
+        {
+            var carResult = await _carsService.RemoveCarAsync(Id);
+            Console.WriteLine("ID É: " + Id);
+
+            return RedirectToAction(nameof(CarsController.Index));
+            //return null;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCar( [Bind("Model, NrBolts")] Cars car )
+        public async Task<IActionResult> AddCar(CarViewModel car)
         {
-            var result = await _carsService.AddCarAsync(car);
-            TempData["FailMessage"] = result.IsFailed? "Failed to add car, please try again." : null;
-            TempData["SuccessMessage"] = result.IsSuccess? "Car created successfully!" : null;
+            var carDto = new Cars()
+            {
+                Model = car.Model,
+                NrBolts = car.NrBolts
+            };
+
+            var result = await _carsService.AddCarAsync(carDto);
+
+            if (result.IsFailed)
+            {
+                ModelState.TryAddModelError("FailMessage", "Failed to add car!");
+            }
+            else
+            {
+                ModelState.TryAddModelError("SuccessMessage", "Car created successfully!");
+            }
+
+            //return View(nameof(CarsController.Index), GetAllCars().Result);
             return RedirectToAction(nameof(CarsController.Index));
+
         }
+
     }
 }

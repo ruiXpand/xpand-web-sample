@@ -67,5 +67,16 @@ namespace XpandDEVWebCourse.Business
             }
 
         }
+
+        public async Task<Result> RemoveCarAsync(int Id)
+        {
+            Console.WriteLine("ID É: " + Id);
+            return Result.Ok();
+        }
+
+        public Task<Result> UpdateCarAsync(Cars car)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace XpandDEVWebCourse.Business
         Task<List<Car>> GetAllCarsAsync();
         Task<Result<Car>> GetCarAsync(int id);
         Task<Result> AddCarAsync(Cars car);
+        Task<Result> RemoveCarAsync(int id);
+        Task<Result> UpdateCarAsync(Cars car);
     }
 }

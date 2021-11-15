@@ -16,4 +16,8 @@
     <ProjectReference Include="..\XpandDEVWebCourse.Models\XpandDEVWebCourse.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>
