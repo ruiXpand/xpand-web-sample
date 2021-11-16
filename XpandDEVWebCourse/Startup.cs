@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using XpandDEVWebCourse.Business;
 using XpandDEVWebCourse.Data;
+using XpandDEVWebCourse.Web.Entensibility;
 
 namespace XpandDEVWebCourse
 {
@@ -31,6 +32,8 @@ namespace XpandDEVWebCourse
             services.AddDbContext<CourseDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DbConnectionString"],b => b.MigrationsAssembly("XpandDEVWebCourse.Data")));
 
             services.AddTransient<ICarsService, CarsService>();
+
+            services.AddTransient<CarsExtensibility>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

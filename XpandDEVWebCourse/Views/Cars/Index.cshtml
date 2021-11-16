@@ -1,6 +1,5 @@
 ﻿@model List<CarViewModel>
-    <h2>@DateTime.Now</h2>
-    
+
     <h2>Cars:</h2>
     <div class="row">
         <div class="col-12 col-md-4">
@@ -14,14 +13,7 @@
         </div>
     </div>
 
-    <div class="cars-list">     
-    <h2>@DateTime.Now</h2>
-        
-        @foreach (var c in Model)
-        {
-            <partial name="_ListedCar" model="c" />
-        }
-    </div>
+    <div id="cars-list"></div>
     <br />
 
     <form asp-action="AddCar">
@@ -43,5 +35,20 @@
             @Html.ValidationMessage("SuccessMessage")
         </span>
         <p></p>
-        <input class=" col-2 form-control" type="submit" value="Submit">
+        <input class="col-2 form-control" type="submit" value="Submit" id="add-car">
     </form>
+
+
+    @section scripts{
+    <script>
+        $(document).ready(function () {
+            
+            $("#cars-list").load("api/Cars/all");
+
+            $("#add-car").click(function () {
+                $("#cars-list").load("api/Cars/all");
+            });
+
+        });
+    </script>
+    }

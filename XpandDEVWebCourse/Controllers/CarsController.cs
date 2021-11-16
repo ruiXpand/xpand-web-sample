@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using XpandDEVWebCourse.Business;
 using XpandDEVWebCourse.Data;
 using XpandDEVWebCourse.Models;
+using XpandDEVWebCourse.Web.Entensibility;
 using XpandDEVWebCourse.Web.ViewModels;
 
 namespace XpandDEVWebCourse.Web.Controllers
@@ -13,53 +15,30 @@ namespace XpandDEVWebCourse.Web.Controllers
     [Route("Cars")]
     public class CarsController : Controller
     {
-        private readonly ICarsService _carsService;
+        private readonly CarsExtensibility _carsExtensibility;
 
-        public CarsController(ICarsService carsService)
+        public CarsController(CarsExtensibility carsExtensibility)
         {
-            _carsService = carsService;
+            _carsExtensibility = carsExtensibility;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var carsVm = await GetAllCars();
-
+            var carsVm = await _carsExtensibility.GetAllCars();
             return View(carsVm);
         }
-
-        public async Task<List<CarViewModel>> GetAllCars()
-        {
-            var cars = await _carsService.GetAllCarsAsync();
-
-            var carsVm = cars
-            .Select(m => new CarViewModel()
-            {
-                Id = m.Id,
-                Model = m.Model,
-                NrBolts = m.NrBolts
-            }).ToList();
-
-            return carsVm;
-        }
-
+          
         public async Task<Car> GetCar(int id)
         {
-            var carResult = await _carsService.GetCarAsync(1);
-
-            if (carResult.IsFailed)
-                return null;
-
-            return carResult.Value;
+            var carResult = await _carsExtensibility.GetCar(1);
+            return carResult;
         }
 
         public async Task<IActionResult> RemoveCar([Bind("Id")] int Id)
         {
-            var carResult = await _carsService.RemoveCarAsync(Id);
-            Console.WriteLine("ID É: " + Id);
-
+            var carResult = await _carsExtensibility.RemoveCar(Id);
             return RedirectToAction(nameof(CarsController.Index));
-            //return null;
         }
 
         [HttpPost]
@@ -71,7 +50,7 @@ namespace XpandDEVWebCourse.Web.Controllers
                 NrBolts = car.NrBolts
             };
 
-            var result = await _carsService.AddCarAsync(carDto);
+            var result = await _carsExtensibility.AddCar(carDto);
 
             if (result.IsFailed)
             {
@@ -82,9 +61,9 @@ namespace XpandDEVWebCourse.Web.Controllers
                 ModelState.TryAddModelError("SuccessMessage", "Car created successfully!");
             }
 
-            //return View(nameof(CarsController.Index), GetAllCars().Result);
-            return RedirectToAction(nameof(CarsController.Index));
+            var cars = await _carsExtensibility.GetAllCars();
 
+            return View(nameof(CarsController.Index), cars);
         }
 
     }
