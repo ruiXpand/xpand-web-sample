@@ -44,7 +44,6 @@ namespace XpandDEVWebCourse.Web.Controllers
                 Model = model,
                 NrBolts = nrBolts
             };
-            Console.WriteLine(id + model + nrBolts);
             var carResult = await _carsExtensibility.EditCar(carDto);
             Console.WriteLine(carResult);
             if (carResult.IsSuccess)
@@ -52,8 +51,8 @@ namespace XpandDEVWebCourse.Web.Controllers
             return BadRequest();
         }
 
-        [Route("CarRemove")]
-        public async Task<IActionResult> RemoveCar(int carId)
+        [Route("CarDelete")]
+        public async Task<IActionResult> DeleteCar(int carId)
         {
             var carResult = await _carsExtensibility.RemoveCar(carId);
             Console.WriteLine(carResult);
@@ -81,15 +80,9 @@ namespace XpandDEVWebCourse.Web.Controllers
             var result = await _carsExtensibility.AddCar(carDto);
 
             if (result.IsFailed)
-            {
-                ModelState.TryAddModelError("FailMessage", "Failed to add car!");
                 return BadRequest();
-            }
-            else
-            {
-                ModelState.TryAddModelError("SuccessMessage", "Car created successfully!");
-                return PartialView("_ListedCar", new CarViewModel() { Id = result.Value, Model = model, NrBolts = nrBolts});
-            }
+
+            return PartialView("_ListedCar", new CarViewModel() { Id = result.Value, Model = model, NrBolts = nrBolts});
         }
     }
 }

@@ -32,24 +32,12 @@
         <input class="form-control" type="number" id="nrBolts" name="nrBolts">
     </div>
 </div>
-<span class="alert-danger" id="FailMessage">
-    @Html.ValidationMessage("FailMessage")
-</span>
-<span class="alert-success" id="SuccessMessage">
-    @Html.ValidationMessage("SuccessMessage")
-</span>
 <p></p>
 <button class="col-2" id="add-car">Add car</button>
 
 
 @section scripts{
 <script>
-    /*$(document).ready(LoadCars());
-
-    function LoadCars() {
-        $("#cars-list").load("@Url.Action("CarsPartial")");
-    };
-    */
 
     $(function () {
         $("#add-car").click(function () {
@@ -92,7 +80,7 @@
     function DeleteCarConfirmed(id, parent) {
         $.ajax({
             type: "GET",
-            url: "@Url.Action("RemoveCar")",
+            url: "@Url.Action("DeleteCar")",
             data: {carId: id},
             dataType: "text",
             success: function (msg) {
@@ -145,15 +133,16 @@
                 }
             });
         });
-                
+
         function CloseEditMode() {
             carModelInput.disabled = true;
             carBoltsInput.disabled = true;
             confirmEdit.hidden = true;
             cancelEdit.hidden = true;
         }
-
     });
+                    
+
 
     function ErrorAlert(message) {
         cuteAlert({
@@ -163,6 +152,7 @@
             buttonText: "Close"
         })
     }
+
 </script>
 }
 
