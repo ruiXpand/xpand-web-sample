@@ -1,54 +1,169 @@
 ﻿@model List<CarViewModel>
 
-    <h2>Cars:</h2>
-    <div class="row">
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Id</label>
-        </div>
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Model</label>
-        </div>
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Nº Bolts</label>
-        </div>
+<h2>Cars:</h2>
+<div class="row">
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Id</label>
     </div>
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Model</label>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Nº Bolts</label>
+    </div>
+</div>
 
-    <div id="cars-list"></div>
-    <br />
-
-    <form asp-action="AddCar">
-        <h2>Create a new car:</h2>
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <label class="col-form-label" for="model">Model:</label><br>
-                <input class="form-control" type="text" id="Model" name="Model"><br>
-            </div>
-            <div class="col-12 col-md-6">
-                <label class="col-form-label" for="nrBolts">Nº of bolts</label><br>
-                <input class="form-control" type="number" id="nrBolts" name="nrBolts">
-            </div>
-        </div>
-        <span class="alert-danger">
-            @Html.ValidationMessage("FailMessage")
-        </span>
-        <span class="alert-success">
-            @Html.ValidationMessage("SuccessMessage")
-        </span>
-        <p></p>
-        <input class="col-2 form-control" type="submit" value="Submit" id="add-car">
-    </form>
-
-
-    @section scripts{
-    <script>
-        $(document).ready(function () {
-            
-            $("#cars-list").load("api/Cars/all");
-
-            $("#add-car").click(function () {
-                $("#cars-list").load("api/Cars/all");
-            });
-
-        });
-    </script>
+<div class="car-list" id="cars-list">
+    @foreach (var item in Model)
+    {
+        <partial name="_ListedCar" model="@item"/>
     }
+</div>
+<br />
+
+<h2>Create a new car:</h2>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <label class="col-form-label" for="model">Model:</label><br>
+        <input class="form-control" type="text" id="model" name="Model"><br>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="col-form-label" for="nrBolts">Nº of bolts</label><br>
+        <input class="form-control" type="number" id="nrBolts" name="nrBolts">
+    </div>
+</div>
+<span class="alert-danger" id="FailMessage">
+    @Html.ValidationMessage("FailMessage")
+</span>
+<span class="alert-success" id="SuccessMessage">
+    @Html.ValidationMessage("SuccessMessage")
+</span>
+<p></p>
+<button class="col-2" id="add-car">Add car</button>
+
+
+@section scripts{
+<script>
+    /*$(document).ready(LoadCars());
+
+    function LoadCars() {
+        $("#cars-list").load("@Url.Action("CarsPartial")");
+    };
+    */
+
+    $(function () {
+        $("#add-car").click(function () {
+            insertedModel = $("#model").val();
+            insertedBolts = $("#nrBolts").val();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddCar")",
+                data: {model: insertedModel, nrBolts: insertedBolts},
+                dataType: "text",
+                success: function (msg) {
+                    $("#cars-list").append(msg);
+                },
+                error: function (req, status, error) {
+                    ErrorAlert("Car not inserted, please try again");
+
+                }
+            });
+        });
+    });
+
+    $("#cars-list").on('click','#delete-car', function(){
+        let parent = $(this).parents(".car-row");
+        let id = $(parent).data('car-id');
+        console.log(id);
+        
+        cuteAlert({
+          type: "question",
+          title: "Delete car",
+          message: "Are you sure you want to delete?",
+          confirmText: "Yes",
+          cancelText: "Cancel"
+        }).then((e)=>{
+          if ( e == ("confirm"))
+            DeleteCarConfirmed(id, parent);
+        })
+    });
+
+    function DeleteCarConfirmed(id, parent) {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("RemoveCar")",
+            data: {carId: id},
+            dataType: "text",
+            success: function (msg) {
+                $(".car-row[data-car-id='"+id+"']").remove();
+            },
+            error: function (req, status, error) {
+                ErrorAlert("Car removal error, please try again");
+            }
+        });
+    };
+
+    $("#cars-list").on('click','#edit-car', function(){
+        let parent = $(this).parents(".car-row");
+        let id = $(parent).data('car-id');
+        console.log(id);
+
+        let carModelInput = parent[0].querySelector('.car-model');
+        let carBoltsInput = parent[0].querySelector('.car-nrBolts');
+        let oldModel = carModelInput.value;
+        let oldBolts = carBoltsInput.value;
+        carModelInput.disabled = false;
+        carBoltsInput.disabled = false;
+        
+        let confirmEdit = parent[0].querySelector('.confirm-edit');
+        let cancelEdit = parent[0].querySelector('.cancel-edit');
+
+        confirmEdit.hidden = false;
+        cancelEdit.hidden = false;
+
+        $(cancelEdit).click(function () {
+            carModelInput.value = oldModel;
+            carBoltsInput.value = oldBolts;
+            CloseEditMode();
+        });
+
+        $(confirmEdit).click(function () {
+            newModel = carModelInput.value;
+            newNrBolts = carBoltsInput.value;
+
+             $.ajax({
+                type: "GET",
+                url: "@Url.Action("EditCar")",
+                data: {id: id, model: newModel, nrBolts: newNrBolts},
+                dataType: "text",
+                success: function (msg) {
+                    CloseEditMode();
+                },
+                error: function (req, status, error) {
+                    ErrorAlert("Car edit error, please try again");
+                }
+            });
+        });
+                
+        function CloseEditMode() {
+            carModelInput.disabled = true;
+            carBoltsInput.disabled = true;
+            confirmEdit.hidden = true;
+            cancelEdit.hidden = true;
+        }
+
+    });
+
+    function ErrorAlert(message) {
+        cuteAlert({
+            type: "error",
+            title: "Error",
+            message: message,
+            buttonText: "Close"
+        })
+    }
+</script>
+}
+
+

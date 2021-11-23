@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +13,17 @@ namespace XpandDEVWebCourse.Business
     public class CarsService : ICarsService
     {
         private readonly CourseDbContext _dbContext;
+        private readonly ILogger<CarsService> _logger;
 
-        public CarsService(CourseDbContext dbContext)
+        public CarsService(CourseDbContext dbContext, ILogger<CarsService> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<List<Models.Car>> GetAllCarsAsync()
         {
-            var dbCars = await _dbContext.Cars.ToListAsync();
+            var dbCars = await _dbContext.Cars.AsNoTracking().ToListAsync();
 
             var cars = dbCars
                 .Select(m => new Models.Car() { Id = m.Id, Model = m.Model, NrBolts=m.NrBolts })
@@ -31,7 +34,7 @@ namespace XpandDEVWebCourse.Business
 
         public async Task<Result<Models.Car>> GetCarAsync(int Id)
         {
-            var car = await _dbContext.Cars.FirstOrDefaultAsync(m => m.Id == Id);
+            var car = await _dbContext.Cars.AsNoTracking().FirstOrDefaultAsync(m => m.Id == Id);
 
             if (car == null)
                 return Result.Fail("Error while trying to get car");
@@ -46,7 +49,7 @@ namespace XpandDEVWebCourse.Business
             return Result.Ok(dtoCar);
         }
 
-        public async Task<Result> AddCarAsync(Cars car)
+        public async Task<Result<int>> AddCarAsync(Cars car)
         {
             Cars newCar = new Cars
             {
@@ -56,10 +59,16 @@ namespace XpandDEVWebCourse.Business
 
             try
             {
-                await _dbContext.Cars.AddAsync(newCar);
-                _dbContext.SaveChanges();
-                Console.WriteLine(Result.Ok());
-                return Result.Ok();
+                _dbContext.Cars.Add(newCar);
+
+                var result = await _dbContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    _logger.LogInformation("Ok", newCar);
+                    return Result.Ok(newCar.Id);
+                }
+                _logger.LogError("Error while trying to add car!", newCar);
+                return Result.Fail(string.Empty);
             }
             catch (Exception ex)
             {
@@ -70,13 +79,32 @@ namespace XpandDEVWebCourse.Business
 
         public async Task<Result> RemoveCarAsync(int Id)
         {
-            Console.WriteLine("ID É: " + Id);
-            return Result.Ok();
+            try
+            {
+                Cars carToRemove = await _dbContext.Cars.FirstOrDefaultAsync(c => c.Id == Id);
+                var result = _dbContext.Cars.Remove(carToRemove);
+                _dbContext.SaveChanges();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
         }
 
-        public Task<Result> UpdateCarAsync(Cars car)
+        public async Task<Result> UpdateCarAsync(Cars car)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //Cars carToEdit = await _dbContext.Cars.FirstOrDefaultAsync(c => c.Id == Id);
+                var result = _dbContext.Cars.Update(car);
+                await _dbContext.SaveChangesAsync();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
         }
     }
 }

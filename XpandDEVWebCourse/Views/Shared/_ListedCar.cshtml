@@ -1,23 +1,29 @@
-﻿ 
- @foreach (var item in Model)
-{
-    <div class="row">
-    <div class="col-12 col-md-3">
-        <input type="text" disabled class="form-control" value="@item.Id" />
+﻿@model CarViewModel
+
+    <div class="row car-row" data-car-id="@Model.Id">
+        <div class="col-12 col-md-3">
+            <input type="text" disabled class="form-control" value="@Model.Id" id="car-id"/>
+        </div>
+        <div class="col-12 col-md-4">
+            <input type="text" disabled class="form-control car-model" value="@Model.Model" id="car-model">
+        </div>
+        <div class="col-12 col-md-2">
+            <input type="number" disabled class="form-control car-nrBolts" value="@Model.NrBolts" id="car-nrBolts">
+        </div>
+        <div class="col-12 col-md-3">
+            <button type="button" class="delete-car btn general-btn" id="delete-car">
+                <img src="images/delete.svg" alt="Delete icon" />
+            </button>
+            <button type="button" class="edit-car btn general-btn" id="edit-car">
+                <img src="images/edit.svg" alt="Edit icon" />
+            </button>
+            <button type="button" hidden class="confirm-edit btn general-btn" id="confirm-edit-car">
+                <img src="images/check.svg" width="15" height="15" alt="Confirm icon" />
+            </button>
+            <button type="button" hidden class="cancel-edit btn general-btn" id="cancel-edit-car">
+                <img src="images/cancel.svg" width="15" height="15" alt="Cancel icon" />
+            </button>
+        </div>
     </div>
-    <div class="col-12 col-md-4">
-        <input type="text" disabled class="form-control" value="@item.Model">
-    </div>
-    <div class="col-12 col-md-3">
-        <input type="text" disabled class="form-control" value="@item.NrBolts">
-    </div>
-    <div class="col-12 col-md-2">
-        <button class="btn general-btn"asp-action="RemoveCar">
-            <img src="images/delete.svg" alt="Delete icon"/>
-        </button>
-        <button class="btn general-btn">
-            <img src="images/edit.svg" alt="Edit icon" />
-        </button>
-    </div>
-</div>
-}
+
+
