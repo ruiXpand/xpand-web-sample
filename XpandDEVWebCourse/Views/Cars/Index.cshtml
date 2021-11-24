@@ -38,6 +38,12 @@
         <input class="col-2 form-control" type="submit" value="Submit" id="add-car">
     </form>
 
+    <p></p>
+    @using (Html.BeginForm("SimpleMethod", "Cars"))
+    {
+    <button type="submit" >Simple button</button>
+    }
+
 
     @section scripts{
     <script>

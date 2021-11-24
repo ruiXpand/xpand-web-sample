@@ -66,5 +66,12 @@ namespace XpandDEVWebCourse.Web.Controllers
             return View(nameof(CarsController.Index), cars);
         }
 
+        [Route("SimpleMethod")]
+        public IActionResult SimpleMethod()
+        {
+            Console.WriteLine("It works!");
+            return RedirectToAction(nameof(CarsController.Index));
+        }
+
     }
 }
