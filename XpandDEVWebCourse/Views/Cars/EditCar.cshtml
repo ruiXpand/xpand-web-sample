@@ -1,0 +1,42 @@
+﻿@model CarViewModel
+
+<h2>Edit Car:</h2>
+
+<form asp-action="SaveEditCar">
+
+    <div class="col-12 col-md-6">
+        <label class="col-form-label" for="id">Id:</label>
+        <input type="text" disabled class="form-control" value="@Model.Id" />
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+    </div>
+    <div class="col-12 col-md-6">
+        <label class="col-form-label" for="model">Model:</label>
+        <input type="text" class="form-control" value="@Model.Model" asp-for="Model">
+    </div>
+    <div class="col-12 col-md-6">
+        <label class="col-form-label" for="nrBolts">Nº of bolts</label>
+        <input type="number" class="form-control" value="@Model.NrBolts" asp-for="NrBolts">
+    </div>
+
+    <p></p>
+    <span class="alert-danger">
+        @Html.ValidationMessage("FailMessage")
+    </span>
+    <span class="alert-success">
+        @Html.ValidationMessage("SuccessMessage")
+    </span>
+
+    <p></p>
+    <input class="col-2 form-control" type="submit" value="Save" />
+</form>
+
+<p></p>
+<form asp-action="RemoveCar" onSubmit="return confirm('Are you sure you wish to remove this car?');">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input class="col-2 form-control" type="submit" value="Remove">
+</form>
+
+<p></p>
+<form asp-action="BackEditCar">
+    <input class="col-2 form-control" type="submit" value="Back">
+</form>

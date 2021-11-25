@@ -70,13 +70,31 @@ namespace XpandDEVWebCourse.Business
 
         public async Task<Result> RemoveCarAsync(int Id)
         {
-            Console.WriteLine("ID É: " + Id);
-            return Result.Ok();
+            try
+            {
+                Cars carToRemove = await _dbContext.Cars.FirstOrDefaultAsync(c => c.Id == Id);
+                var result = _dbContext.Cars.Remove(carToRemove);
+                _dbContext.SaveChanges();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
         }
 
-        public Task<Result> UpdateCarAsync(Cars car)
+        public async Task<Result> UpdateCarAsync(Cars car)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = _dbContext.Cars.Update(car);
+                await _dbContext.SaveChangesAsync();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
         }
     }
 }

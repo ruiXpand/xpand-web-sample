@@ -1,60 +1,41 @@
 ﻿@model List<CarViewModel>
 
-    <h2>Cars:</h2>
+<h2>Cars:</h2>
+<div class="row">
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Id</label>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Model</label>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="col-form-label">Nº Bolts</label>
+    </div>
+</div>
+
+<div id="cars-list">
+    <partial name="_ListedCar" />
+</div>
+<br />
+
+<form asp-action="AddCar">
+    <h2>Create a new car:</h2>
     <div class="row">
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Id</label>
+        <div class="col-12 col-md-6">
+            <label class="col-form-label" for="model">Model:</label><br>
+            <input class="form-control" type="text" name="Model"><br>
         </div>
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Model</label>
-        </div>
-        <div class="col-12 col-md-4">
-            <label class="col-form-label">Nº Bolts</label>
+        <div class="col-12 col-md-6">
+            <label class="col-form-label" for="nrBolts">Nº of bolts</label><br>
+            <input class="form-control" type="number" name="nrBolts">
         </div>
     </div>
-
-    <div id="cars-list"></div>
-    <br />
-
-    <form asp-action="AddCar">
-        <h2>Create a new car:</h2>
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <label class="col-form-label" for="model">Model:</label><br>
-                <input class="form-control" type="text" id="Model" name="Model"><br>
-            </div>
-            <div class="col-12 col-md-6">
-                <label class="col-form-label" for="nrBolts">Nº of bolts</label><br>
-                <input class="form-control" type="number" id="nrBolts" name="nrBolts">
-            </div>
-        </div>
-        <span class="alert-danger">
-            @Html.ValidationMessage("FailMessage")
-        </span>
-        <span class="alert-success">
-            @Html.ValidationMessage("SuccessMessage")
-        </span>
-        <p></p>
-        <input class="col-2 form-control" type="submit" value="Submit" id="add-car">
-    </form>
-
+    <span class="alert-danger">
+        @Html.ValidationMessage("FailMessage")
+    </span>
+    <span class="alert-success">
+        @Html.ValidationMessage("SuccessMessage")
+    </span>
     <p></p>
-    @using (Html.BeginForm("SimpleMethod", "Cars"))
-    {
-    <button type="submit" >Simple button</button>
-    }
-
-
-    @section scripts{
-    <script>
-        $(document).ready(function () {
-            
-            $("#cars-list").load("api/Cars/all");
-
-            $("#add-car").click(function () {
-                $("#cars-list").load("api/Cars/all");
-            });
-
-        });
-    </script>
-    }
+    <input class="col-2 form-control" type="submit" value="Submit">
+</form>

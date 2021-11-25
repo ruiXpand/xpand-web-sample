@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using XpandDEVWebCourse.Business;
@@ -34,20 +32,21 @@ namespace XpandDEVWebCourse.Web.Entensibility
             return carsVm;
         }
 
-        public async Task<Car> GetCar(int id)
+        public async Task<CarViewModel> GetCar(int id)
         {
-            var carResult = await _carsService.GetCarAsync(1);
+            var carResult = await _carsService.GetCarAsync(id);
 
             if (carResult.IsFailed)
                 return null;
 
-            return carResult.Value;
-        }
+            CarViewModel carViewModel = new CarViewModel()
+            {
+                Id = carResult.Value.Id,
+                Model = carResult.Value.Model,
+                NrBolts = carResult.Value.NrBolts
+            };
 
-        public async Task<FluentResults.Result> RemoveCar(int Id)
-        {
-            var carResult = await _carsService.RemoveCarAsync(Id);
-            return carResult;
+            return carViewModel;
         }
 
         public async Task<FluentResults.Result> AddCar(Cars car)
@@ -60,6 +59,21 @@ namespace XpandDEVWebCourse.Web.Entensibility
 
             var result = await _carsService.AddCarAsync(carDto);
             return result;
+        }
+
+        public async Task<FluentResults.Result> RemoveCar(int id)
+        {
+            var carResult = await _carsService.RemoveCarAsync(id);
+            return carResult;
+        }
+
+        public async Task<FluentResults.Result> EditCar(Cars car)
+        {
+            var carEditResult = await _carsService.UpdateCarAsync(car);
+            if (carEditResult.IsFailed)
+                return null;
+
+            return carEditResult;
         }
     }
 }

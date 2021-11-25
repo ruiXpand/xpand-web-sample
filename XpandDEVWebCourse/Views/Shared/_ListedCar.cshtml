@@ -1,23 +1,21 @@
-﻿ 
- @foreach (var item in Model)
+﻿@foreach (var item in Model)
 {
     <div class="row">
-    <div class="col-12 col-md-3">
-        <input type="text" disabled class="form-control" value="@item.Id" />
+        <div class="col-12 col-md-3">
+            <input type="text" disabled class="form-control" value="@item.Id" />
+        </div>
+        <div class="col-12 col-md-4">
+            <input type="text" disabled class="form-control" value="@item.Model">
+        </div>
+        <div class="col-12 col-md-2">
+            <input type="text" disabled class="form-control" value="@item.NrBolts">
+        </div>
+
+        <form asp-action="EditCar" asp-controller="Cars" asp-for="id">
+            <input type="hidden" name="id" value="@item.Id" />
+            <button class="btn general-btn" type="submit">
+                <img src="images/edit.svg" alt="Edit icon" />
+            </button>
+        </form>
     </div>
-    <div class="col-12 col-md-4">
-        <input type="text" disabled class="form-control" value="@item.Model">
-    </div>
-    <div class="col-12 col-md-3">
-        <input type="text" disabled class="form-control" value="@item.NrBolts">
-    </div>
-    <div class="col-12 col-md-2">
-        <button class="btn general-btn"asp-action="RemoveCar">
-            <img src="images/delete.svg" alt="Delete icon"/>
-        </button>
-        <button class="btn general-btn">
-            <img src="images/edit.svg" alt="Edit icon" />
-        </button>
-    </div>
-</div>
 }

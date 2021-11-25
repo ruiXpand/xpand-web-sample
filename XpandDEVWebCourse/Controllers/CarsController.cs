@@ -28,21 +28,15 @@ namespace XpandDEVWebCourse.Web.Controllers
             var carsVm = await _carsExtensibility.GetAllCars();
             return View(carsVm);
         }
-          
-        public async Task<Car> GetCar(int id)
-        {
-            var carResult = await _carsExtensibility.GetCar(1);
-            return carResult;
-        }
 
-        public async Task<IActionResult> RemoveCar([Bind("Id")] int Id)
+        public CarViewModel GetCar(int id)
         {
-            var carResult = await _carsExtensibility.RemoveCar(Id);
-            return RedirectToAction(nameof(CarsController.Index));
+            var carResult = _carsExtensibility.GetCar(1);
+            return carResult.Result;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCar(CarViewModel car)
+        public IActionResult AddCar(CarViewModel car)
         {
             var carDto = new Cars()
             {
@@ -50,28 +44,58 @@ namespace XpandDEVWebCourse.Web.Controllers
                 NrBolts = car.NrBolts
             };
 
-            var result = await _carsExtensibility.AddCar(carDto);
+            var carResult = _carsExtensibility.AddCar(carDto);
 
-            if (result.IsFailed)
-            {
+            if (carResult == null)
                 ModelState.TryAddModelError("FailMessage", "Failed to add car!");
-            }
             else
-            {
                 ModelState.TryAddModelError("SuccessMessage", "Car created successfully!");
-            }
 
-            var cars = await _carsExtensibility.GetAllCars();
-
+            var cars = _carsExtensibility.GetAllCars();
             return View(nameof(CarsController.Index), cars);
         }
 
-        [Route("SimpleMethod")]
-        public IActionResult SimpleMethod()
+        [Route("RemoveCar")]
+        public IActionResult RemoveCar(int id)
         {
-            Console.WriteLine("It works!");
-            return RedirectToAction(nameof(CarsController.Index));
+            var carResult = _carsExtensibility.RemoveCar(id);
+            if (carResult.IsCompletedSuccessfully)
+                return RedirectToAction(nameof(CarsController.Index));
+            return BadRequest();
         }
 
+        [Route("EditCar")]
+        public IActionResult EditCar(int id)
+        {
+            var result = _carsExtensibility.GetCar(id);
+            return View(result);
+        }
+
+        [HttpPost]
+        [Route("SaveEditCar")]
+        public IActionResult SaveEditCar(CarViewModel car)
+        {
+            var carDto = new Cars()
+            {
+                Id = car.Id,
+                Model = car.Model,
+                NrBolts = car.NrBolts
+            };
+
+            var carResult = _carsExtensibility.EditCar(carDto);
+            if (carResult == null)
+            {
+                ModelState.TryAddModelError("FailMessage", "Failed to edit car!");
+                return View(nameof(EditCar), car);
+            }
+            ModelState.TryAddModelError("SuccessMessage", "Car edited successfully!");
+            return View(nameof(EditCar), car);
+        }
+
+        [Route("BackEditCar")]
+        public IActionResult CancelEditCar()
+        {
+            return RedirectToAction(nameof(CarsController.Index));
+        }
     }
 }
