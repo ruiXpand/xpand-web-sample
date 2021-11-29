@@ -31,7 +31,7 @@ namespace XpandDEVWebCourse.Web.Controllers
 
         public CarViewModel GetCar(int id)
         {
-            var carResult = _carsExtensibility.GetCar(1);
+            var carResult = _carsExtensibility.GetCar(id);
             return carResult.Result;
         }
 
@@ -46,29 +46,33 @@ namespace XpandDEVWebCourse.Web.Controllers
 
             var carResult = _carsExtensibility.AddCar(carDto);
 
-            if (carResult == null)
+            if (carResult.Result.IsFailed)
                 ModelState.TryAddModelError("FailMessage", "Failed to add car!");
             else
                 ModelState.TryAddModelError("SuccessMessage", "Car created successfully!");
 
             var cars = _carsExtensibility.GetAllCars();
-            return View(nameof(CarsController.Index), cars);
+            return View(nameof(CarsController.Index), cars.Result);
         }
 
         [Route("RemoveCar")]
         public IActionResult RemoveCar(int id)
         {
-            var carResult = _carsExtensibility.RemoveCar(id);
-            if (carResult.IsCompletedSuccessfully)
+            var carResult = _carsExtensibility.RemoveCar(id).Result;
+
+            if (carResult.IsSuccess)
                 return RedirectToAction(nameof(CarsController.Index));
-            return BadRequest();
+
+            ModelState.TryAddModelError("FailMessage", "Failed to remove car!");
+            var reloadCar = _carsExtensibility.GetCar(id);
+            return View(nameof(CarsController.EditCar), reloadCar.Result);
         }
 
         [Route("EditCar")]
         public IActionResult EditCar(int id)
         {
             var result = _carsExtensibility.GetCar(id);
-            return View(result);
+            return View(result.Result);
         }
 
         [HttpPost]

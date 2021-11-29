@@ -51,6 +51,8 @@ namespace XpandDEVWebCourse.Web.Entensibility
 
         public async Task<FluentResults.Result> AddCar(Cars car)
         {
+            if (car.NrBolts <= 0)
+                return FluentResults.Result.Fail(string.Empty);
             var carDto = new Cars()
             {
                 Model = car.Model,

@@ -73,7 +73,7 @@ namespace XpandDEVWebCourse.Business
             try
             {
                 Cars carToRemove = await _dbContext.Cars.FirstOrDefaultAsync(c => c.Id == Id);
-                var result = _dbContext.Cars.Remove(carToRemove);
+                _dbContext.Cars.Remove(carToRemove);
                 _dbContext.SaveChanges();
                 return Result.Ok();
             }
